@@ -16,7 +16,8 @@ im = InputManager()
 # Mock mode is disabled by default to connect to actual OLLAMA
 mock_mode = os.environ.get('JARVIS_MOCK', 'false').lower() == 'true'
 ollama_host = os.environ.get('OLLAMA_HOST', 'http://localhost:11434')
-ai = AICommandProcessor(host=ollama_host, mock=mock_mode)
+ollama_model = os.environ.get('JARVIS_MODEL', 'phi3')
+ai = AICommandProcessor(model=ollama_model, host=ollama_host, mock=mock_mode)
 
 @app.route('/')
 def index():
