@@ -13,8 +13,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 sm = ScreenshotManager()
 im = InputManager()
-# Mock mode is enabled if specifically requested
-mock_mode = os.environ.get('JARVIS_MOCK', 'true').lower() == 'true'
+# Mock mode is disabled by default to connect to actual OLLAMA
+mock_mode = os.environ.get('JARVIS_MOCK', 'false').lower() == 'true'
 ollama_host = os.environ.get('OLLAMA_HOST', 'http://localhost:11434')
 ai = AICommandProcessor(host=ollama_host, mock=mock_mode)
 
