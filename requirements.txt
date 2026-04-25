@@ -5,4 +5,5 @@ pyautogui
 ollama
 pillow
 python-socketio
-eventlet
+gevent
+gevent-websocket
