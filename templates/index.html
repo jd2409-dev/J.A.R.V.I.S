@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. Remote Control</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #00d2ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #hud {
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #00d2ff;
+            box-shadow: 0 0 15px #00d2ff;
+        }
+        #screen-container {
+            flex-grow: 1;
+            width: 90%;
+            margin: 20px;
+            position: relative;
+            border: 2px solid #00d2ff;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #screen {
+            max-width: 100%;
+            max-height: 100%;
+            cursor: crosshair;
+        }
+        #controls {
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 210, 255, 0.1);
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            border-top: 1px solid #00d2ff;
+        }
+        input[type="text"] {
+            background: #000;
+            border: 1px solid #00d2ff;
+            color: #00d2ff;
+            padding: 10px;
+            width: 300px;
+        }
+        button {
+            background: #00d2ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background: #fff;
+            box-shadow: 0 0 10px #fff;
+        }
+        #voice-btn {
+            background: #ff4b2b;
+            color: #fff;
+        }
+        #status {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .jarvis-circle {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #00d2ff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+            70% { transform: scale(1.1); opacity: 0.8; box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
+            100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="hud">
+        <div class="jarvis-circle">J</div>
+        <h1>SYSTEM STATUS: ONLINE</h1>
+        <div id="connection-status">CONNECTED</div>
+    </div>
+
+    <div id="screen-container">
+        <img id="screen" src="" alt="Laptop Screen">
+    </div>
+
+    <div id="controls">
+        <input type="text" id="command-input" placeholder="Enter command for J.A.R.V.I.S...">
+        <button id="send-btn">SEND</button>
+        <button id="voice-btn">VOICE CONTROL</button>
+    </div>
+    <div id="status">Ready for orders, sir.</div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
