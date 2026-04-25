@@ -13,8 +13,10 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 sm = ScreenshotManager()
 im = InputManager()
-# Mock mode is enabled if OLLAMA_HOST is not set or if specifically requested
-ai = AICommandProcessor(mock=os.environ.get('JARVIS_MOCK', 'true').lower() == 'true')
+# Mock mode is enabled if specifically requested
+mock_mode = os.environ.get('JARVIS_MOCK', 'true').lower() == 'true'
+ollama_host = os.environ.get('OLLAMA_HOST', 'http://localhost:11434')
+ai = AICommandProcessor(host=ollama_host, mock=mock_mode)
 
 @app.route('/')
 def index():
@@ -33,8 +35,11 @@ def handle_command(data):
     command = data.get('command')
     print(f"Received command: {command}")
 
+    # Capture current screenshot for AI context
+    screenshot_b64 = sm.capture_base64()
+
     # Process with AI
-    ai_resp_json = ai.process_command(command)
+    ai_resp_json = ai.process_command(command, screenshot_base64=screenshot_b64)
     try:
         ai_resp = json.loads(ai_resp_json)
         actions = ai_resp.get('actions', [])
@@ -73,6 +78,8 @@ def execute_action(action):
         im.type_text(action.get('text'))
     elif action_type == 'press':
         im.press_key(action.get('key'))
+    elif action_type == 'wait':
+        time.sleep(float(action.get('seconds', 1)))
 
 def emit_screenshot():
     screenshot = sm.capture_base64()

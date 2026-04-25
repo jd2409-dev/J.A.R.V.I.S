@@ -1,0 +1,8 @@
+flask
+flask-socketio
+mss
+pyautogui
+ollama
+pillow
+python-socketio
+eventlet

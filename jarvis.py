@@ -50,11 +50,11 @@ class InputManager:
         pyautogui.press(key)
 
 class AICommandProcessor:
-    def __init__(self, model='phi3', mock=False):
+    def __init__(self, model='phi3', host='http://localhost:11434', mock=False):
         self.model = model
         self.mock = mock
         if not mock:
-            self.client = ollama.Client()
+            self.client = ollama.Client(host=host)
         else:
             self.client = None
 
@@ -69,15 +69,35 @@ class AICommandProcessor:
             else:
                 return json.dumps({"actions": [], "message": f"I heard: {command}. How can I help?"})
 
-        system_prompt = """You are J.A.R.V.I.S., a highly advanced AI assistant.
-        You control a computer via mouse and keyboard.
-        Given a user command, you should output ONLY the necessary actions in JSON format.
-        Actions can be: 'click', 'move', 'type', 'press'.
-        Example output: {"actions": [{"type": "click", "x": 100, "y": 200}, {"type": "type", "text": "hello"}]}
+        # Get screen geometry for context
+        width, height = pyautogui.size()
+
+        system_prompt = f"""You are J.A.R.V.I.S., a highly advanced AI assistant.
+        You control a computer via mouse and keyboard. The current screen resolution is {width}x{height}.
+        You will receive a user command and potentially an image of the screen.
+        Analyze the command and the screen, then output ONLY the necessary actions in JSON format.
+        Actions can be:
+        - 'click' (x, y)
+        - 'move' (x, y)
+        - 'type' (text)
+        - 'press' (key)
+        - 'wait' (seconds)
+
+        For "make/take a call": identify common call icons or use keyboard shortcuts (like Space or Enter).
+
+        Example output: {{"actions": [{{"type": "click", "x": 100, "y": 200}}, {{"type": "type", "text": "hello"}}]}}
         """
 
         try:
-            response = self.client.generate(model=self.model, prompt=f"{system_prompt}\nUser command: {command}")
+            if screenshot_base64:
+                # If model supports vision (e.g. llava), we send the image
+                response = self.client.generate(
+                    model=self.model,
+                    prompt=f"{system_prompt}\nUser command: {command}",
+                    images=[screenshot_base64]
+                )
+            else:
+                response = self.client.generate(model=self.model, prompt=f"{system_prompt}\nUser command: {command}")
             return response['response']
         except Exception as e:
             return json.dumps({"error": str(e), "actions": []})
